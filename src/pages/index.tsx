@@ -2,6 +2,7 @@ import { COUPONS } from "@/constant/coupon";
 import axios from "axios";
 import { useState } from "react";
 import { Check, CircleX } from "lucide-react";
+import { GAPageView } from "@/hooks/useGAPageView";
 
 export default function Home() {
   const today = new Date().toISOString().split("T")[0];
@@ -43,6 +44,7 @@ export default function Home() {
 
   return (
     <div className="p-4">
+      <GAPageView />
       <form onSubmit={handleSubmit} className="max-w-md mx-auto">
         <div className="mb-4">
           <label htmlFor="uid" className="block mb-2 text-sm font-medium">
