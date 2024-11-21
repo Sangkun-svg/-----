@@ -1,115 +1,105 @@
-import Image from "next/image";
-import localFont from "next/font/local";
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+import { COUPONS } from "@/constant/coupon";
+import axios from "axios";
+import { useState } from "react";
+import { Check, CircleX } from "lucide-react";
 
 export default function Home() {
-  return (
-    <div
-      className={`${geistSans.variable} ${geistMono.variable} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
-    >
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/pages/index.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const today = new Date().toISOString().split("T")[0];
+  const [uid, setUid] = useState("");
+  const [couponStatus, setCouponStatus] = useState<Array<boolean>>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const validCoupons = COUPONS.filter((coupon) => {
+    if (!coupon.expiryDate) return true;
+
+    const expiryDate = new Date(coupon.expiryDate);
+    const currentDate = new Date(today);
+    return expiryDate >= currentDate;
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
+    try {
+      if (!uid.trim()) {
+        throw new Error("아이디를 입력해주세요");
+      }
+      const response = await axios.post("/api/register", { uid });
+      setCouponStatus(response.data.isFailed);
+      if (response.data.success) {
+        alert("등록이 완료되었습니다!");
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "등록 중 오류가 발생했습니다"
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="p-4">
+      <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+        <div className="mb-4">
+          <label htmlFor="uid" className="block mb-2 text-sm font-medium">
+            킹캇캐슬 성주 아이디
+          </label>
+          <input
+            type="text"
+            id="uid"
+            value={uid}
+            onChange={(e) => setUid(e.target.value)}
+            className="w-full px-3 py-2 border rounded-lg"
+            placeholder="아이디를 입력하세요"
+            disabled={isLoading}
+          />
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          type="submit"
+          className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 disabled:bg-gray-400"
+          disabled={isLoading}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          {isLoading ? "처리중..." : "입력하기"}
+        </button>
+      </form>
+
+      <div className="max-w-md mx-auto mt-8">
+        <h2 className="text-lg font-semibold mb-4">
+          적용 가능한 쿠폰 목록 ({validCoupons.length}개)
+        </h2>
+        <div className="space-y-3">
+          {validCoupons.map((coupon, index) => (
+            <div
+              key={index}
+              className="flex justify-between p-4 border rounded-lg bg-gray-50"
+            >
+              <div>
+                <p className="font-medium">{coupon.code}</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  만료일:{" "}
+                  {coupon.expiryDate
+                    ? new Date(coupon.expiryDate).toLocaleDateString("ko-KR")
+                    : "상시"}
+                </p>
+              </div>
+              {couponStatus[index] !== undefined && (
+                <p
+                  className={`text-sm mt-2 ${
+                    couponStatus[index] ? "text-red-500" : "text-green-500"
+                  }`}
+                >
+                  {couponStatus[index] ? <CircleX /> : <Check />}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
