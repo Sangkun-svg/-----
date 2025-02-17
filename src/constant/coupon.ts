@@ -14,30 +14,42 @@ export const COUPONS: Coupon[] = [
   },
   {
     code: "KGCNovemberCoupon",
-    expiryDate: "2024-11-30",
+    expiryDate: null,
   },
   {
     code: "KGCLiveCollab2023",
-    expiryDate: "2024-08-02",
+    expiryDate: null,
   },
   {
     code: "JoinNowKgcGlobal",
-    expiryDate: "2024-10-20",
+    expiryDate: null,
   },
   {
     code: "EnjoyKingGodCollab",
-    expiryDate: "2024-10-22",
+    expiryDate: null,
   },
   {
     code: "KingGodGift23",
-    expiryDate: "2024-12-16",
+    expiryDate: null,
   },
   {
     code: "KGCPlayLive4",
-    expiryDate: "2024-12-27",
+    expiryDate: null,
   },
   {
     code: "KingGodCartoon22",
-    expiryDate: "2025-02-02",
+    expiryDate: null,
+  },
+  {
+    code: "FabulousFebruary",
+    expiryDate: null,
+  },
+  {
+    code: "KGCNewYear2025",
+    expiryDate: null,
+  },
+  {
+    code: "KGCWinterFestival2024",
+    expiryDate: null,
   },
 ];
